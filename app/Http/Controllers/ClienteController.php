@@ -2,36 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Produto;
+use App\Models\Cliente;
+use App\Models\ClienteModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
-class ProdutoController extends Controller
+class ClienteController extends Controller
 {
-    public function index(){
-        $produtos = Produto::all();
+    public function clienteStore(Request $request){
         
-        $produtosComImagem = $produtos->map(function($produto){
-            return [
-                'nome' => $produto->nome,
-                'preco' => $produto->preco,
-                'ingredientes' => $produto->ingredientes,
-                'imagem' => asset('storage/'. $produto->imagem),
-            ];
-        });
-        return response()->json($produtosComImagem);
-    }
-
-    public function store(Request $request){
-        
-        $produtoData = $request->all();
+        $clienteData = $request->all();
     
         if($request->hasFile('imagem')){
             $imagem = $request->file('imagem');
             $nomeImagem = time().'.'.$imagem->getClientOriginalExtension();
-            $caminhoImagem = $imagem->storeAs('imagens/produtos', $nomeImagem, 'public');
-            $produtoData['imagem'] = $caminhoImagem;
+            $caminhoImagem = $imagem->storeAs('imagens/clientes', $nomeImagem, 'public');
+            $clienteData['imagem'] = $caminhoImagem;
         }
-        $produto = Produto::create($produtoData);
-        return response()->json(['produto'=>$produto], 201);
+        $clientes = Cliente::create($clienteData);
+        return response()->json(['cliente'=>$clientes], 201);
     }
 }
